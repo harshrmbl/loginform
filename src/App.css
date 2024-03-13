@@ -1,0 +1,141 @@
+.App {
+  text-align: center;
+  align-items: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.error {
+  font-size: 15px;
+  padding: 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+.input {
+  margin-top: 20px;
+  border-width: 2px;
+  padding: 10px;
+}
+.radioButton{
+  margin: 10px;
+}
+
+#table {
+  margin: 10px;
+  border-width: 2px;
+  border-color: grey;
+  padding: 20px;
+  height: 20px;
+}
+.thdetails{
+  background-color: #fff;
+}
+.tbdetils{
+  background-color: #fff;
+}
+.btn {
+  margin: 10px;
+  border-width: 2px;
+  color: #282c34;
+  
+  background-color: olivedrab;
+}
+
+.btn:hover{
+  background-color: olivedrab;
+}
+.button {
+  margin: 5px;
+  border-width: 2px;
+}
+.BtnSp {
+  border-width: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: center;
+}
+#form {
+ box-sizing: content-box;
+}
+#terms{
+  margin: 10px;
+}
+.terms{
+border-width: 2px;
+}
+.gender{
+  border-width: 2px;
+}
+
+h2 {
+  margin: 10px;
+  background-color: #97d1ec;
+}
+.age{
+  border-width: 2px;
+}
+.position{
+  border-width: 2px;
+ 
+}
+#tablerow {
+  border-width: 2px;
+}
+.value {
+  padding-left: 10px;
+  padding-right: 10px;
+  border-width: 2px;
+  width: 200px;
+  height: 50px;
+}
+.container {
+  display: flex;
+}
+
+.left-container {
+  width: 50%;
+  padding: 20px;
+  border: #282c34;
+  background-color: rgb(87, 138, 168);
+}
+
+.right-container {
+  width: 100%;
+  padding: 20px;
+  background-color: #dfb1b1;
+  
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+.blank {
+  color: aquamarine;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
