@@ -36,7 +36,7 @@ function App() {
   };
 
   const handlesubmit = async () => {
-    setBackendErrors("");
+   setBackendErrors({});
     if (!disableFEValidation) {
       const errors = validate(inputVal);
       setFormErrors(errors);
@@ -53,6 +53,7 @@ function App() {
           ) {
             const backendErrors = error.response.data.errors;
             setBackendErrors(backendErrors);
+            
 
             backendErrors.forEach((error) => {
               setFormErrors((prevErrors) => ({
@@ -130,8 +131,8 @@ function App() {
 
       if (!response.ok) {
         const errorMessage = await response.json();
-        setBackendErrors(errorMessage);
-        console.log(backendErrors)
+        setBackendErrors(errorMessage.message);
+        console.log(backendErrors.message)
       } else {
         await fetchDocuments();
         setInputVal(initialInputVal);
@@ -186,21 +187,13 @@ function App() {
     }
   };
 
-  function cancelEdit() {
-    setEditIndex(null);
-  }
 
   return (
     <div className="container">
       <div className="left-container">
-        <form id="form" onSubmit={handlesubmit}>
+        <form id="form" onSubmit={handlesubmit} onKeyDown={handleKeyDown}>
           <div className="error-summary">
-            {Object.keys(backendErrors).map((fieldName, index) => (
-              <span key={index} className="backend-error">
-                {fieldName}: {backendErrors.message}
-              </span>
-            ))}
-            
+          
           </div>
           <div className="input-container">
             <input
@@ -211,9 +204,10 @@ function App() {
               onChange={onInputChange}
               value={inputVal.name}
             />
-            {/*  {backendErrors.name && (
+            <br />
+             {backendErrors.name && (
               <span className="error">{backendErrors.name}</span>
-            )} */}
+            )}
             {formErrors.name && (
               <span className="error">{formErrors.name}</span>
             )}
@@ -227,16 +221,16 @@ function App() {
               onChange={onInputChange}
               value={inputVal.age}
             />
-            {/*  {backendErrors.age && (
+            <br />
+             {backendErrors.age && (
               <span className="error">{backendErrors.age}</span>
-            )} */}
+            )}
             {formErrors.age && <span className="error">{formErrors.age}</span>}
           </div>
           <div className="input-container">
             <select
               name="position"
               className="input"
-              onKeyDown={handleKeyDown}
               onChange={onInputChange}
               value={inputVal.position}
             >
@@ -244,9 +238,10 @@ function App() {
               <option value="Manager">Manager</option>
               <option value="Developer">Developer</option>
             </select>
-            {/*  {backendErrors.position && (
+            <br />
+             {backendErrors.position && (
               <span className="error">{backendErrors.position}</span>
-            )} */}
+            )}
             {formErrors.position && (
               <span className="error">{formErrors.position}</span>
             )}
@@ -260,7 +255,6 @@ function App() {
                 type="radio"
                 value="Male"
                 checked={inputVal.gender === "Male"}
-                onKeyDown={handleKeyDown}
                 onChange={onInputChange}
                 onBlur={() => handleBlur("gender")}
               />
@@ -275,7 +269,6 @@ function App() {
                 type="radio"
                 value="Female"
                 checked={inputVal.gender === "Female"}
-                onKeyDown={handleKeyDown}
                 onChange={onInputChange}
                 onBlur={() => handleBlur("gender")}
               />
@@ -291,7 +284,6 @@ function App() {
                 type="checkbox"
                 value="checked"
                 checked={inputVal.terms}
-                onKeyDown={handleKeyDown}
                 onChange={onInputChange}
                 onBlur={() => handleBlur("terms")}
               />
@@ -337,7 +329,7 @@ function App() {
                 <td className="button">
                   {editIndex === index ? (
                     <>
-                      <button className="button" onClick={cancelEdit}>
+                      <button className="button" onClick={()=>setEditIndex(null)}>
                         Cancel
                       </button>
                     </>
