@@ -37,6 +37,7 @@ function App() {
 
   const handlesubmit = async () => {
    setBackendErrors({});
+   
     if (!disableFEValidation) {
       const errors = validate(inputVal);
       setFormErrors(errors);
@@ -45,6 +46,7 @@ function App() {
         try {
           await addDocument();
           setFormErrors({});
+          setInputVal(initialInputVal);
         } catch (error) {
           if (
             error.response &&
@@ -53,8 +55,6 @@ function App() {
           ) {
             const backendErrors = error.response.data.errors;
             setBackendErrors(backendErrors);
-            
-
             backendErrors.forEach((error) => {
               setFormErrors((prevErrors) => ({
                 ...prevErrors,
@@ -72,6 +72,7 @@ function App() {
     } else {
       try {
         await addDocument();
+        setInputVal(initialInputVal);
       } catch (error) {
         console.log("Error adding document:-", error);
       }
@@ -132,11 +133,13 @@ function App() {
       if (!response.ok) {
         const errorMessage = await response.json();
         setBackendErrors(errorMessage.message);
-        console.log(backendErrors.message)
+        setInputVal(initialInputVal);
+        console.log(errorMessage)
       } else {
         await fetchDocuments();
         setInputVal(initialInputVal);
         setBackendErrors({});
+        setInputVal(initialInputVal);
       }
     } catch (error) {
       console.log("Error adding document:-", error);
@@ -156,6 +159,7 @@ function App() {
   const editItem = (index) => {
     setInputVal(arrList[index]);
     setEditIndex(index);
+    
   };
 
   const deleteInput = async (id) => {
@@ -181,6 +185,7 @@ function App() {
       });
       setEditIndex(null);
       fetchDocuments();
+      setInputVal(initialInputVal);
     } catch (error) {
       console.error("Error updating document: ", error);
       alert("Error updating document: " + error.message);
@@ -247,6 +252,7 @@ function App() {
             )}
           </div>
           <br />
+          <div>
           <div className="radioButton">
             <label htmlFor="male">
               <input
@@ -276,6 +282,10 @@ function App() {
             </label>
             <br />
           </div>
+          {backendErrors.gender && (
+              <span className="error">{backendErrors.gender}</span>
+            )}
+          </div>
           <div className="checkbox">
             <label htmlFor="terms">
               <input
@@ -289,6 +299,10 @@ function App() {
               />
               Terms And conditions
             </label>
+            <br />
+            {backendErrors.terms && (
+              <span className="error">{backendErrors.terms}</span>
+            )}
           </div>
           <br />
           <button type="button" className="btn" onClick={buttonClick}>
