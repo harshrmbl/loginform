@@ -1,43 +1,55 @@
 import React, { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
 import "./App.css";
+import { useNavigate } from "react-router-dom";
 
-const disableFEValidation = true;
+const disableFEValidation: boolean = true;
 
-function App() {
-  const initialInputVal = {
+interface InputValues {
+  _id?: string; 
+  name: string;
+  age: string;
+  position: string;
+  gender: string;
+  terms: boolean;
+}
+
+const Home: React.FC = () => {
+  const initialInputVal: InputValues = {
     name: "",
     age: "",
     position: "",
     gender: "",
     terms: false,
   };
-  const [inputVal, setInputVal] = useState(initialInputVal);
-  const [arrList, setArrList] = useState([]);
-  const [editIndex, setEditIndex] = useState(null);
-  const [formErrors, setFormErrors] = useState({});
-  const [backendErrors, setBackendErrors] = useState({});
+
+  const [inputVal, setInputVal] = useState<InputValues>(initialInputVal);
+  const [arrList, setArrList] = useState<InputValues[]>([]);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [backendErrors, setBackendErrors] = useState<Record<string, string>>({});
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchDocuments();
   }, []);
 
-  const fetchDocuments = async () => {
+  const fetchDocuments = async (): Promise<void> => {
     try {
-      const response = await fetch(`http://localhost:5000/api/todos`);
+      const response = await fetch("http://localhost:5000/api/todos");
       if (!response.ok) {
         throw new Error("Failed to fetch documents");
       }
       const data = await response.json();
-      console.log("check response ", data);
       setArrList(data);
     } catch (error) {
       console.error("Error fetching document:", error);
     }
   };
 
-  const handlesubmit = async () => {
-   setBackendErrors({});
-   
+  const handleSubmit = async (): Promise<void> => {
+    setBackendErrors({});
     if (!disableFEValidation) {
       const errors = validate(inputVal);
       setFormErrors(errors);
@@ -48,24 +60,15 @@ function App() {
           setFormErrors({});
           setInputVal(initialInputVal);
         } catch (error) {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.errors
-          ) {
-            const backendErrors = error.response.data.errors;
-            setBackendErrors(backendErrors);
-            backendErrors.forEach((error) => {
-              setFormErrors((prevErrors) => ({
-                ...prevErrors,
-
-                [error.path[0]]: error.message,
-              }));
-            });
-
-            alert(JSON.stringify(error.response.data.errors));
+          if (axios.isAxiosError(error)) {
+            const backendErrors = error.response?.data.errors;
+            if (backendErrors) {
+              setBackendErrors(backendErrors);
+              console.log(backendErrors);
+              alert(JSON.stringify(backendErrors));
+            }
           } else {
-            console.log("Error adding document:-", error);
+            console.log("Error adding document:", error);
           }
         }
       }
@@ -74,31 +77,31 @@ function App() {
         await addDocument();
         setInputVal(initialInputVal);
       } catch (error) {
-        console.log("Error adding document:-", error);
+        console.log("Error adding document:", error);
       }
     }
   };
 
-  const onInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
-    const val = type === "checkbox" ? checked : value;
+  const onInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const { name, value, type } = event.target as HTMLInputElement;
+    const val = type === "checkbox" ? (event.target as HTMLInputElement).checked : value;
     setInputVal((prevState) => ({
       ...prevState,
-      [name]: type === "checkbox" ? checked : val,
+      [name]: type === "checkbox" ? val : value
     }));
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
-  const buttonClick = async () => {
-    if (editIndex != null) {
+  const buttonClick = async (): Promise<void> => {
+    if (editIndex !== null) {
       await saveEdit(arrList[editIndex]._id);
     } else {
-      handlesubmit();
+      handleSubmit();
     }
   };
 
-  const validate = (values) => {
-    const errors = {};
+  const validate = (values: InputValues): Record<string, string> => {
+    const errors: Record<string, string> = {};
     const nameRegExp = /^[a-zA-Z\s]+$/;
     if (!values.name.trim()) {
       errors.name = "Name is required";
@@ -129,77 +132,93 @@ function App() {
         },
         body: JSON.stringify(inputVal),
       });
-
       if (!response.ok) {
         const errorMessage = await response.json();
         setBackendErrors(errorMessage.message);
-        setInputVal(initialInputVal);
         console.log(errorMessage)
       } else {
         await fetchDocuments();
         setInputVal(initialInputVal);
         setBackendErrors({});
-        setInputVal(initialInputVal);
       }
     } catch (error) {
       console.log("Error adding document:-", error);
     }
   };
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>): void => {
     if (event.key === "Enter") {
       buttonClick();
     }
   };
 
-  const handleBlur = (name) => {
+  const handleBlur = (name: string): void => {
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
-  const editItem = (index) => {
+  const editItem = (index: number): void => {
     setInputVal(arrList[index]);
     setEditIndex(index);
-    
   };
 
-  const deleteInput = async (id) => {
+  const deleteInput = async (id: string): Promise<void> => {
     try {
-      await fetch(`http://localhost:5000/api/todos/${id}`, {
-        method: "DELETE",
-      });
+      await axios.delete(`http://localhost:5000/api/todos/${id}`);
       fetchDocuments();
-    } catch (error) {
-      console.error("Error deleting document :- ", error);
-      alert("Error deleting document:- " + error.message);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        console.log("Error deleting deocument", axiosError)
+        alert(axiosError.message);
+      }
+      else {
+        console.error("Error deleting document:", error);
+        alert("Error deleting document");
+      }
     }
   };
 
-  const saveEdit = async (id) => {
+  const saveEdit = async (id?: string): Promise<void> => {
     try {
-      await fetch(`http://localhost:5000/api/todos/${id}`, {
-        method: "PUT",
+      const response = await axios.put(`http://localhost:5000/api/todos/${id || inputVal._id}`, inputVal, {
         headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(inputVal),
+          "Content-Type": "application/json"
+        }
       });
-      setEditIndex(null);
-      fetchDocuments();
-      setInputVal(initialInputVal);
+      if (response.status !== 200) {
+        throw new Error("Failed to update document");
+      }
+      else {
+        setEditIndex(null);
+        fetchDocuments();
+        setInputVal(initialInputVal);
+      }
     } catch (error) {
-      console.error("Error updating document: ", error);
-      alert("Error updating document: " + error.message);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        console.error("Error updating document:", axiosError);
+        alert("Error updating document: " + axiosError.message);
+      } else {
+        console.error("Unknown error occurred while updating document:", error);
+        alert("Unknown error occurred while updating document");
+      }
     }
   };
+  
+
+  const handleLogout = (): void => {
+    localStorage.removeItem('isLoggedIn');
+    navigate("/");
+
+  };
+
+
 
 
   return (
     <div className="container">
       <div className="left-container">
-        <form id="form" onSubmit={handlesubmit} onKeyDown={handleKeyDown}>
-          <div className="error-summary">
-          
-          </div>
+        <form id="form" onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
           <div className="input-container">
             <input
               type="text"
@@ -210,7 +229,7 @@ function App() {
               value={inputVal.name}
             />
             <br />
-             {backendErrors.name && (
+            {backendErrors.name && (
               <span className="error">{backendErrors.name}</span>
             )}
             {formErrors.name && (
@@ -227,13 +246,14 @@ function App() {
               value={inputVal.age}
             />
             <br />
-             {backendErrors.age && (
+            {backendErrors.age && (
               <span className="error">{backendErrors.age}</span>
             )}
             {formErrors.age && <span className="error">{formErrors.age}</span>}
           </div>
           <div className="input-container">
             <select
+              aria-label="Select option"
               name="position"
               className="input"
               onChange={onInputChange}
@@ -244,7 +264,7 @@ function App() {
               <option value="Developer">Developer</option>
             </select>
             <br />
-             {backendErrors.position && (
+            {backendErrors.position && (
               <span className="error">{backendErrors.position}</span>
             )}
             {formErrors.position && (
@@ -253,36 +273,36 @@ function App() {
           </div>
           <br />
           <div>
-          <div className="radioButton">
-            <label htmlFor="male">
-              <input
-                id="male"
-                name="gender"
-                type="radio"
-                value="Male"
-                checked={inputVal.gender === "Male"}
-                onChange={onInputChange}
-                onBlur={() => handleBlur("gender")}
-              />
-              Male
-            </label>
-          </div>
-          <div className="radioButton">
-            <label htmlFor="female">
-              <input
-                id="female"
-                name="gender"
-                type="radio"
-                value="Female"
-                checked={inputVal.gender === "Female"}
-                onChange={onInputChange}
-                onBlur={() => handleBlur("gender")}
-              />
-              Female
-            </label>
-            <br />
-          </div>
-          {backendErrors.gender && (
+            <div className="radioButton">
+              <label htmlFor="male">
+                <input
+                  id="male"
+                  name="gender"
+                  type="radio"
+                  value="Male"
+                  checked={inputVal.gender === "Male"}
+                  onChange={onInputChange}
+                  onBlur={() => handleBlur("gender")}
+                />
+                Male
+              </label>
+            </div>
+            <div className="radioButton">
+              <label htmlFor="female">
+                <input
+                  id="female"
+                  name="gender"
+                  type="radio"
+                  value="Female"
+                  checked={inputVal.gender === "Female"}
+                  onChange={onInputChange}
+                  onBlur={() => handleBlur("gender")}
+                />
+                Female
+              </label>
+              <br />
+            </div>
+            {backendErrors.gender && (
               <span className="error">{backendErrors.gender}</span>
             )}
           </div>
@@ -335,7 +355,7 @@ function App() {
                 <td className="button">
                   <button
                     className="button"
-                    onClick={() => deleteInput(item._id)}
+                    onClick={() => item._id && deleteInput(item._id)}
                   >
                     X
                   </button>
@@ -343,12 +363,12 @@ function App() {
                 <td className="button">
                   {editIndex === index ? (
                     <>
-                      <button className="button" onClick={()=>setEditIndex(null)}>
+                      <button onClick={() => setEditIndex(null)}>
                         Cancel
                       </button>
                     </>
                   ) : (
-                    <button className="button" onClick={() => editItem(index)}>
+                    <button onClick={() => editItem(index)}>
                       Edit
                     </button>
                   )}
@@ -357,9 +377,11 @@ function App() {
             ))}
           </tbody>
         </table>
+        <button id="Logoutbtn"  onClick={handleLogout}>Logout</button>
       </div>
+
     </div>
   );
 }
 
-export default App;
+export default Home;
