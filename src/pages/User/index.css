@@ -1,0 +1,96 @@
+.user-page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #53663d; 
+  color: #ffffff; 
+  padding: 10px 20px; 
+  text-align: center; 
+}
+
+.header .profile h2,
+.header .profile p {
+  padding-left: 10px; 
+}
+
+.date-time {
+  display: flex;
+  flex-direction: column;
+  font-size: 18px; 
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-details {
+  margin-left: 10px;
+}
+
+.functions {
+  margin-bottom: 20px;
+}
+
+.functions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.functions li {
+  margin-bottom: 10px;
+}
+
+.function-btn {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.function-btn:hover {
+  background-color: #45a049;
+}
+
+.logout-btn {
+  background-color: #f44336; /* Red */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #cc352c;
+}
+
+.calendar {
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+
+.function-btn svg,
+.logout-btn svg {
+  margin-right: 15px;
+}

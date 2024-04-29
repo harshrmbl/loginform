@@ -1,0 +1,84 @@
+.register-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.register-container h2 {
+  text-align: center;
+}
+
+.register-container form {
+  margin-top: 20px;
+}
+
+.register-container form div {
+  margin-bottom: 15px;
+}
+
+.register-container label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="email"],
+.register-container input[type="password"]
+{
+  width: 95%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+#password{
+  width: 95%;
+  padding: 10px;
+  border: 0px solid #ccc;
+  border-radius: 5px;
+}
+
+#passinput{
+  display:flex;
+  flex-direction:row;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+
+}
+
+.register-container .error {
+  color: red;
+  font-size: 0.8em;
+}
+
+.register-container button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.register-container button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.register-container p {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.register-container p button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.register-container p button:hover {
+  text-decoration: underline;
+}

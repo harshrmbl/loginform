@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import "./App.css";
 import { useNavigate } from "react-router-dom";
+//import MapComponent from "./map/main";
+import Mappoint from "./map/mappoint";
+import { MapProvider } from "./map/mapcontext";
 
 const disableFEValidation: boolean = true;
 
 interface InputValues {
-  _id?: string; 
+  _id?: string;
   name: string;
   age: string;
   position: string;
@@ -204,15 +207,11 @@ const Home: React.FC = () => {
       }
     }
   };
-  
 
   const handleLogout = (): void => {
     localStorage.removeItem('isLoggedIn');
     navigate("/");
-
   };
-
-
 
 
   return (
@@ -377,7 +376,13 @@ const Home: React.FC = () => {
             ))}
           </tbody>
         </table>
-        <button id="Logoutbtn"  onClick={handleLogout}>Logout</button>
+        <button id="Logoutbtn" onClick={handleLogout}>Logout</button>
+
+        <div className="map-container">
+          <MapProvider>
+            <Mappoint />
+          </MapProvider>
+        </div>
       </div>
 
     </div>
