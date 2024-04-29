@@ -1,0 +1,3 @@
+[submodule "loginform"]
+	path = loginform
+	url = https://github.com/harshrmbl/loginform.git

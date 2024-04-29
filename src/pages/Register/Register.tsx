@@ -1,59 +1,42 @@
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash}from "react-icons/fa"
 import "./Register.css";
 import { useNavigate } from "react-router-dom";
 
 const RegisterPage: React.FC = () => {
-  const [name, setName] = useState<string>("");
+  /* const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [role, setRole] = useState<string>("");
+  const [password, setPassword] = useState<string>(""); */
   const [nameError, setNameError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [backendError, setBackendError] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const sanitizedValue = value.trimStart();
-    if (name === "name") {
-      setName(sanitizedValue);
-    } else if (name === "email") {
-      if (!/\s/.test(value)) {
-        setEmail(sanitizedValue);
-      }
-    } else if (name === "password") {
-      setPassword(sanitizedValue);
-    }
-    else if (name === "role") {
-      setRole(value);
-    }
-  };
+  const [formData, setFormData] = useState({
+    name: '',
+    email:'',
+    password:''
+  });
 
-  const passwordvisibility = () => {
-    setShowPassword(!showPassword);
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
+    const {name, value} = e.target;
+    const sanitizedValue = value.replace(/\s/g, '');
+    setFormData({...formData, [name]:sanitizedValue})
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const {name, email, password} = formData;
+
     if (name === "") {
       setNameError("Name cannot be empty.");
-      return;
     } else {
       setNameError("");
     }
-    if (email === "") {
-      setEmailError("Email cannot be empty");
-      return;
-    } else {
-      setEmailError("");
-    }
+
     if (password === "") {
       setPasswordError("Password cannot be empty.");
-      return;
     } else if (
       !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/.test(
         password
@@ -62,29 +45,32 @@ const RegisterPage: React.FC = () => {
       setPasswordError(
         "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
       );
-      return;
     } else {
       setPasswordError("");
     }
 
+
+    if (!isValidEmail(email)) {
+      setEmailError("Email cannot be empty");
+    } else {
+      setEmailError("");
+    }
+
     if (isValidPassword(password) && isValidEmail(email)) {
-      try {
-        const response = await fetch(`http://localhost:5000/api/users/register`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name, email, password, role }),
-        });
-        if (response.ok) {
-          navigate("/");
-        } else {
-          const errorMessage = await response.json();
-          setBackendError(errorMessage.msg);
-          console.log(errorMessage)
-        }
-      } catch (error) {
-        console.log("Error Login Document:- ", error)
+      const response = await fetch(`http://localhost:5000/api/users/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (response.ok) {
+        navigate("/");
+      } else {
+        const data = await response.json();
+        setBackendError(data.message);
+        console.log(backendError);
       }
     }
   };
@@ -95,18 +81,13 @@ const RegisterPage: React.FC = () => {
     const hasNumber = /\d/.test(password);
     const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
     const hasNoSpace = !/\s/.test(password);
-    return (
-      password.length >= 8 &&
-      hasUpperCase &&
-      hasLowerCase &&
-      hasNumber &&
-      hasSpecialChar &&
-      hasNoSpace
-    );
+    return password.length >= 8 && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && hasNoSpace;
   };
 
   const isValidEmail = (email: string): boolean => {
-    const emailPattern = /^[^\s]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/;
+    //const emailPattern = /^[a-zA-Z0-9.]+@[a-z]+\.[a-z]+$/;
+     const emailPattern = /^[^s]+@[a-zA-Z0-9.-]+\.[a-zA-Z]$/;
+    //const emailPattern = /!^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$/;
     return emailPattern.test(email);
   };
 
@@ -121,10 +102,9 @@ const RegisterPage: React.FC = () => {
         <div>
           <label>Name:</label>
           <input
-            type="text"
-            name="name"
+            type="name"
             placeholder="Enter Name"
-            value={name}
+            value={formData.name}
             onChange={handleChange}
           />
           {nameError && <div className="error">{nameError}</div>}
@@ -133,41 +113,21 @@ const RegisterPage: React.FC = () => {
           <label>Email:</label>
           <input
             type="email"
-            name="email"
             placeholder="Enter Email"
-            value={email}
+            value={formData.email}
             onChange={handleChange}
           />
           {emailError && <div className="error">{emailError}</div>}
         </div>
-        <>
+        <div>
           <label>Password:</label>
-          <div id="passinput">
-             <input
-             id="password"
-            type={showPassword ? "text" : "password"}
-            name="password"
+          <input
+            type="password"
+            value={formData.password}
             placeholder="Set password"
-            value={password}
             onChange={handleChange}
           />
-            <button type="button" onClick={passwordvisibility}>
-              {showPassword ? <FaEyeSlash/> : <FaEye/>}
-            </button></div>
           {passwordError && <div className="error">{passwordError}</div>}
-        </>
-        <div>
-          <label>Role:</label>
-          <select
-            aria-label="Select option"
-            name="role"
-            onChange={handleChange}
-            value={role}
-          >
-            <option value="">Select Position</option>
-            <option value="User">User</option>
-            <option value="Admin">Admin</option>
-          </select>
         </div>
         {backendError && <div className="error">{backendError}</div>}
         <button type="submit">Register</button>
