@@ -1,6 +1,7 @@
-import { Action } from 'redux';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface InputValues {
+interface Todo {
+  _id?: string;
   name: string;
   age: string;
   position: string;
@@ -8,49 +9,30 @@ interface InputValues {
   terms: boolean;
 }
 
-interface RootState {
-  inputVal: InputValues;
-  arrList: InputValues[];
-}
+const initialState: Todo[] = [];
 
-interface AddDocumentAction extends Action {
-  type: 'ADD_DOCUMENT';
-  payload: InputValues;
-}
-
-interface SetInputValuesAction extends Action {
-  type: 'SET_INPUT_VALUES';
-  payload: InputValues;
-}
-
-type ActionTypes = AddDocumentAction | SetInputValuesAction;
-
-const initialState: RootState = {
-  inputVal: {
-    name: "",
-    age: "",
-    position: "",
-    gender: "",
-    terms: false,
+const todoSlice = createSlice({
+  name: 'todos',
+  initialState,
+  reducers: {
+    addTodo: (state, action: PayloadAction<Todo>) => {
+      state.push(action.payload);
+    },
+    deleteTodo: (state, action: PayloadAction<string>) => {
+      return state.filter(todo => todo._id !== action.payload);
+    },
+    updateTodo: (state, action: PayloadAction<Todo>) => {
+      const index = state.findIndex(todo => todo._id === action.payload._id);
+      if (index !== -1) {
+        state[index] = action.payload;
+      }
+    },
+    setTodos: (state, action: PayloadAction<Todo[]>) => {
+      return action.payload;
+    },
   },
-  arrList: []
-};
+});
 
-const rootReducer = (state: RootState = initialState, action: ActionTypes): RootState => {
-  switch (action.type) {
-    case 'ADD_DOCUMENT':
-      return {
-        ...state,
-        arrList: [...state.arrList, action.payload]
-      };
-    case 'SET_INPUT_VALUES':
-      return {
-        ...state,
-        inputVal: action.payload
-      };
-    default:
-      return state;
-  }
-};
+export const { addTodo, deleteTodo, updateTodo, setTodos } = todoSlice.actions;
 
-export default rootReducer;
+export default todoSlice.reducer;
