@@ -3,8 +3,8 @@ import axios, { AxiosError } from "axios";
 import "./App.scss";
 import { useNavigate } from "react-router-dom";
 //import MapComponent from "./map/main";
-import Mappoint from "./map/mappoint";
-import { MapProvider } from "./map/mapcontext";
+import Mappoint from "../map/mappoint";
+import { MapProvider } from "../map/mapcontext";
 
 const disableFEValidation: boolean = true;
 

@@ -1,6 +1,6 @@
 import React, { ComponentType, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Home from "../home";
+import Home from "../home/home";
 
 const RequireAuth: React.FC<{ component: ComponentType }> = ({ component: WrappedComponent }) => {
   const navigate = useNavigate();
