@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Login.css";
+import "./Login.scss";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {

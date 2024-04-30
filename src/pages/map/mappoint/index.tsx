@@ -10,7 +10,7 @@ import { Vector as VectorLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
 import { Style, Icon } from 'ol/style';
 
-import './index.css';
+import './index.scss';
 import { useMapContext } from '../mapcontext';
 
 const Mappoint: React.FC = () => {

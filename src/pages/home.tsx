@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
-import "./App.css";
+import "./App.scss";
 import { useNavigate } from "react-router-dom";
 //import MapComponent from "./map/main";
 import Mappoint from "./map/mappoint";

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCog, faClipboardList, faHeart } from '@fortawesome/free-solid-svg-icons';
-import './index.css';
+import './index.scss';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 
